@@ -2,6 +2,7 @@ package kg.megacom.login_service.services.impl;
 
 import kg.megacom.login_service.exception.IncorrectPassword;
 import kg.megacom.login_service.exception.NoSuchUser;
+import kg.megacom.login_service.exception.UserInBlock;
 import kg.megacom.login_service.mapping.SessionMapper;
 import kg.megacom.login_service.models.dto.SessionDto;
 import kg.megacom.login_service.models.entity.Account;
@@ -27,8 +28,11 @@ public class SignupServiceImpl implements SignUpService {
         if (account==null){
             throw new NoSuchUser("Пользователь не найден");
         }
-        if (!account.getLogin().equals(password)){
-            throw new IncorrectPassword("Неверный пароль!!!");
+        if (!account.getPassword().equals(password)){
+            throw new IncorrectPassword("Неверный пароль!");
+        }
+        if (!account.isActive()){
+            throw new UserInBlock("Пользователь заблокирован!");
         }
         Calendar calendar=Calendar.getInstance();
         SessionDto sessionDto=new SessionDto();
